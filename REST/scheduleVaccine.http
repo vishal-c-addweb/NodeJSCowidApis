@@ -3,7 +3,7 @@ POST  http://127.0.0.1:3000/api/user/schedule
 x-auth-token: {{token}}
 @Variables = 
 { 
-    "secretCode": 1291, 
+    "secretCode": "1291", 
     "address": "saijpur",
     "vaccineType":"cowaxin",
     "age":"18 & above",

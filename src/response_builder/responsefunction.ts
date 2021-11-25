@@ -1,12 +1,13 @@
-/** Generic function for success & error message */
-export function success<T>(meta: object, data: object) {
+import { Response } from "express";
+
+export function responseFunction(meta: object, data: object, resCode: number, res: Response) {
     let response: object = { meta, data };
-    return response;
+    return res.status(resCode).json(response);
 }
 
-export function error<T>(meta: object, data: object) {
-    let response: object = { meta, data };
-    return response;
+export function responseFunctions(data: object, resCode: number, res: Response,message: string,status:string){
+    //return { statusCode: resCode, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) };
+    return res.status(resCode).json({status: status, data: data, message: message});
 }
 
 export const dataArray: object = {};

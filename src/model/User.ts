@@ -8,42 +8,58 @@ import mongoose from "mongoose";
  * @param members:array
  */
 
+export interface IResult {
+  message: string,
+  status: string,
+  data: object,
+  responsecode: number
+}
+
 export interface IMembers {
-  photoId: string,
+  photoIdProof: string,
   photoIdNumber: string
   name: string,
   gender: string,
   yearOfBirth: number,
-  refId: number,
-  secretCode: number,
+  refId: string,
+  secretCode: string,
   vaccinatedType: string,
   firstDose: object,
-  secondDose: object,
+  secondDose: object
 }
 
 export interface IUser extends Document {
   mobile: number;
   password: string;
-  members: Array<IMembers>;
+  members: Array<IMembers>
 }
 
-const membersSchema = new Schema({
-  photoId: { type: String },
-  photoIdNumber: { type: String },
-  name: { type: String },
-  gender: { type: String },
-  yearOfBirth: { type: Number },
-  refId: { type: Number },
-  secretCode: { type: Number },
-  vaccinatedType: { type: String },
-  firstDose: { type: Object },
-  secondDose: { type: Object }
-}, { _id: false });
+export interface IDose {
+  address: string;
+  vaccineType: string;
+  age:  string;
+  cost: string;
+  date: string;
+  city: string;
+  timeSlot: string;
+  vaccinatedType: string;
+}
 
 const userSchema: Schema = new Schema({
   mobile: { type: Number, required: true, unique: true },
   password: { type: String, required: true },
-  members: [membersSchema]
+  members: [{
+    photoIdProof: { type: String },
+    photoIdNumber: { type: String },
+    name: { type: String },
+    gender: { type: String },
+    yearOfBirth: { type: Number },
+    refId: { type: String },
+    secretCode: { type: String },
+    vaccinatedType: { type: String },
+    firstDose: { type: Object },
+    secondDose: { type: Object }
+  }, { _id: false }]
 });
 
 const User = mongoose.model<IUser>("User", userSchema);

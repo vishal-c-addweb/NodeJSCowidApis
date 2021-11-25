@@ -3,7 +3,7 @@ POST  http://127.0.0.1:3000/api/user/addmember
 x-auth-token: {{token}}
 @Variables = 
 { 
-    "photoId": "Aadhar card", 
+    "photoIdProof": "Aadhar card", 
     "photoIdNumber": "489098080801",
     "name":"vishalkumar mukeshbhai",
     "gender":"male",
