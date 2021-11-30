@@ -1,7 +1,7 @@
 import Request from "../types/Request";
 import { IResponse } from "../model/vaccineCenter";
 import { Response, NextFunction } from "express";
-import { dataArray } from "../response_builder/responsefunction";
+import { dataArray } from "../model/User";
 import responsecode from "../response_builder/responsecode";
 const { validationResult } = require('express-validator');
 

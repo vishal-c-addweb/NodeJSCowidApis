@@ -1,0 +1,11 @@
+### Update vaccine center api.
+POST http://localhost:3000/cowid-19/updatevaccinecenter
+@Variables = 
+{
+    "centerId":"619dd772cdd2d530591ee2f1",
+    "date":"25 November 2021",
+    "name": "covishield",
+    "dose1": "199",
+    "dose2": "211",
+    "age": "18"
+}

@@ -1,0 +1,8 @@
+### Complete Vaccination api.
+POST  http://localhost:3000/cowid-19/vaccinated
+x-auth-token: {{token}}
+@Variables = 
+{
+    "secretCode":"9160",
+    "dose": "second"
+}

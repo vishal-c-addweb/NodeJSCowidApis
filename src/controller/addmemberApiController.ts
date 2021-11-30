@@ -1,10 +1,9 @@
 import { Response } from "express";
 import Request from "../types/Request";
-import { dataArray } from "../response_builder/responsefunction";
 import responsecode from "../response_builder/responsecode";
 import * as userApiService from "../service/userApiService";
 import * as addmemberService from "../service/addmemberService";
-import { IUser } from "../model/User";
+import { IUser, dataArray } from "../model/User";
 import { IResponse } from "../model/vaccineCenter";
 
 const addmemberApiController = {
@@ -18,52 +17,40 @@ const addmemberApiController = {
         let result: IResponse;
         try {
             let user: IUser = await userApiService.getUserById(req.userId);
-            if (!user) {
-                result = {
-                    meta: {
-                        "response_code": responsecode.Not_Found,
-                        "message": "User not found",
-                        "status": "Failed",
-                        "errors": dataArray
-                    },
-                    data: dataArray
-                }
-            } else {
-                if (user.members.length < 4) {
-                    let member: object[] = await addmemberService.getMember(req.body.photoIdNumber);
-                    if (member.length === 0) {
-                        const { photoIdProof, photoIdNumber, name, gender, yearOfBirth } = req.body;
-                        let user:IUser = await addmemberService.addMemberService(req.userId,photoIdProof,photoIdNumber,name,gender,yearOfBirth);
-                        result = {
-                            meta: {
-                                "response_code": responsecode.Created,
-                                "message": "member registered successfully",
-                                "status": "Success",
-                                "errors": dataArray
-                            },
-                            data: user
-                        }
-                    } else {
-                        result = {
-                            meta: {
-                                "response_code": responsecode.Conflict,
-                                "message": "member already registered",
-                                "status": "Failed",
-                                "errors": dataArray
-                            },
-                            data: dataArray
-                        }
+            if (user.members.length < 4) {
+                let member: object[] = await addmemberService.getMember(req.body.photoIdNumber);
+                if (member.length === 0) {
+                    const { photoIdProof, photoIdNumber, name, gender, yearOfBirth } = req.body;
+                    let user:IUser = await addmemberService.addMemberService(req.userId,photoIdProof,photoIdNumber,name,gender,yearOfBirth);
+                    result = {
+                        meta: {
+                            "response_code": responsecode.Created,
+                            "message": "member registered successfully",
+                            "status": "Success",
+                            "errors": dataArray
+                        },
+                        data: user
                     }
                 } else {
                     result = {
                         meta: {
-                            "response_code": responsecode.Bad_Request,
-                            "message": "you can only add 4 members",
+                            "response_code": responsecode.Conflict,
+                            "message": "member already registered",
                             "status": "Failed",
                             "errors": dataArray
                         },
                         data: dataArray
                     }
+                }
+            } else {
+                result = {
+                    meta: {
+                        "response_code": responsecode.Bad_Request,
+                        "message": "you can only add 4 members",
+                        "status": "Failed",
+                        "errors": dataArray
+                    },
+                    data: dataArray
                 }
             }
         } catch (err) {
@@ -85,51 +72,39 @@ const addmemberApiController = {
         let result:IResponse;
         try {
             let user: IUser = await userApiService.getUserById(req.userId);
-            if (!user) {
-                result = {
-                    meta: {
-                        "response_code": responsecode.Not_Found,
-                        "message": "User not found",
-                        "status": "Failed",
-                        "errors": dataArray
-                    },
-                    data: dataArray
-                }
-            } else {
-                for (let i = 0; i < user.members.length; i++) {
-                    if (user.members.length > 0 && user.members[i].firstDose === undefined) {
-                        if (user.members[i].refId === req.query.refId) {
-                            let user: IUser = await addmemberService.deleteMemberService(req.userId, req.query.refId);
-                            result = {
-                                meta: {
-                                    "response_code": responsecode.Forbidden,
-                                    "message": "member deleted successfully",
-                                    "status": "Success",
-                                    "errors": dataArray
-                                },
-                                data: user
-                            }
-                        } else {
-                            result = {
-                                meta: {
-                                    "response_code": responsecode.Forbidden,
-                                    "message": "member already deleted",
-                                    "status": "Failed",
-                                    "errors": dataArray
-                                },
-                                data: dataArray
-                            }
+            for (let i = 0; i < user.members.length; i++) {
+                if (user.members.length > 0 && user.members[i].firstDose === undefined) {
+                    if (user.members[i].refId === req.query.refId) {
+                        let user: IUser = await addmemberService.deleteMemberService(req.userId, req.query.refId);
+                        result = {
+                            meta: {
+                                "response_code": responsecode.Forbidden,
+                                "message": "member deleted successfully",
+                                "status": "Success",
+                                "errors": dataArray
+                            },
+                            data: user
                         }
                     } else {
                         result = {
                             meta: {
                                 "response_code": responsecode.Forbidden,
-                                "message": "you are not able to delete member",
+                                "message": "member already deleted",
                                 "status": "Failed",
                                 "errors": dataArray
                             },
                             data: dataArray
                         }
+                    }
+                } else {
+                    result = {
+                        meta: {
+                            "response_code": responsecode.Forbidden,
+                            "message": "you are not able to delete member",
+                            "status": "Failed",
+                            "errors": dataArray
+                        },
+                        data: dataArray
                     }
                 }
             }

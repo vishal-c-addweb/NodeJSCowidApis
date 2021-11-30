@@ -8,13 +8,6 @@ import mongoose from "mongoose";
  * @param members:array
  */
 
-export interface IResult {
-  message: string,
-  status: string,
-  data: object,
-  responsecode: number
-}
-
 export interface IMembers {
   photoIdProof: string,
   photoIdNumber: string
@@ -29,6 +22,7 @@ export interface IMembers {
 }
 
 export interface IUser extends Document {
+  isAdmin: boolean;
   mobile: number;
   password: string;
   members: Array<IMembers>
@@ -37,15 +31,15 @@ export interface IUser extends Document {
 export interface IDose {
   address: string;
   vaccineType: string;
-  age:  string;
+  age: string;
   cost: string;
   date: string;
-  city: string;
   timeSlot: string;
   vaccinatedType: string;
 }
 
 const userSchema: Schema = new Schema({
+  isAdmin: { type: Boolean, default: false },
   mobile: { type: Number, required: true, unique: true },
   password: { type: String, required: true },
   members: [{
@@ -65,3 +59,5 @@ const userSchema: Schema = new Schema({
 const User = mongoose.model<IUser>("User", userSchema);
 
 export default User;
+
+export const dataArray: object = {};

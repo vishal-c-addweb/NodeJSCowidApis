@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import Request from "../types/Request";
-import { IUser } from "../model/User";
-import { dataArray } from "../response_builder/responsefunction";
+import { IUser, dataArray } from "../model/User";
 import responsecode from "../response_builder/responsecode";
 import * as userApiService from "../service/userApiService";
 import { IResponse } from "../model/vaccineCenter";
@@ -21,12 +20,12 @@ const userApiController = {
             if (user) {
                 const isMatch: boolean = await bcrypt.compare(req.body.password, user.password);
                 if (isMatch) {
-                    const token: string = userApiService.createToken(user._id);
+                    const token: string = userApiService.createToken(user._id,user.isAdmin);
                     result = {
                         meta: {
-                            "response_code": responsecode.Created,
+                            "response_code": responsecode.Success,
                             "message": "Logged in Successfully",
-                            "status": "success",
+                            "status": "Success",
                             "errors": dataArray
                         },
                         data: {token}
@@ -36,7 +35,7 @@ const userApiController = {
                         meta: {
                             "response_code": responsecode.Unauthorized,
                             "message": "Invalid Credential",
-                            "status": "success",
+                            "status": "Success",
                             "errors": dataArray
                         },
                         data: dataArray
@@ -48,7 +47,7 @@ const userApiController = {
                     meta: {
                         "response_code": responsecode.Created,
                         "message": "Registered Successfully",
-                        "status": "success",
+                        "status": "Success",
                         "errors": dataArray
                     },
                     data: {token}
@@ -70,12 +69,12 @@ const userApiController = {
     },
 
     /**
-     * Request a jwt token from User and return user data.
+     * Request a jwt token from User and fetch user data.
      * @param req
      * @param res
      * @returns {*}
      */
-    userData: async function userData(req: Request, res: Response) {
+    fetchUserData: async function fetchUserData(req: Request, res: Response) {
         let result:IResponse;
         try {
             let user: IUser = await userApiService.getUserById(req.userId);
@@ -83,7 +82,7 @@ const userApiController = {
                 meta: {
                     "response_code": responsecode.Success,
                     "message": "User Data",
-                    "status": "success",
+                    "status": "Success",
                     "errors": dataArray
                 },
                 data: user

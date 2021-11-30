@@ -1,0 +1,30 @@
+### Get center user using pinCode
+GET  http://localhost:3000/cowid-19/center/pincode
+@Variables = 
+{ 
+    "pinCode": 382345
+}
+### for filter
+@Variables = 
+{ 
+    "pinCode": 382345,
+    "vaccineName":"COWAXIN",
+    "age":"18 & above",
+    "cost":"free"
+}
+
+### Get center user using city and state
+GET  http://localhost:3000/cowid-19/center/city&state
+@Variables = 
+{
+    "state":"gujarat",
+    "city":"ahmedabad"
+}
+### for filter
+@Variables = 
+{ 
+    "pinCode": 382345,
+    "vaccineName":"COWAXIN",
+    "age":"18 & above",
+    "cost":"free"
+}

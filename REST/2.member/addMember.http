@@ -1,5 +1,5 @@
 ### Add member api.
-POST  http://127.0.0.1:3000/api/user/addmember
+POST http://localhost:3000/cowid-19/addmember
 x-auth-token: {{token}}
 @Variables = 
 { 

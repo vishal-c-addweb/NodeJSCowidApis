@@ -1,9 +1,9 @@
 import { Response } from "express";
 import Request from "../types/Request";
-import { dataArray } from "../response_builder/responsefunction";
+import { dataArray } from "../model/User";
 import responsecode from "../response_builder/responsecode";
 import * as vaccineCenterApiService from "../service/vaccineCenterApiService";
-import VaccineCenter, { ICenter, IResponse, IVaccineCenter } from "../model/vaccineCenter";
+import { IResponse, IVaccineCenter } from "../model/vaccineCenter";
 
 const vaccineCenterApiController = {
 
@@ -30,17 +30,15 @@ const vaccineCenterApiController = {
             } else {
                 const { centerName, address, cost, state, city, pinCode,name,dose1,dose2,age } = req.body;
                 let price: number = req.body.price ? req.body.price : null;
-                let centerObj: ICenter = vaccineCenterApiService.createVaccineCenterObject(centerName, address, cost, state, city, pinCode,name,dose1,dose2,age,price);
-                let center: IVaccineCenter = new VaccineCenter(centerObj);
-                await center.save();
+                let center: IVaccineCenter = await vaccineCenterApiService.createVaccineCenter(centerName, address, cost, state, city, pinCode,name,dose1,dose2,age,price);
                 result = {
                     meta: {
                         "response_code": responsecode.Created,
                         "message": "Center Created successfully",
                         "status": "Success",
-                        "errors": center
+                        "errors": dataArray
                     },
-                    data: dataArray
+                    data: center
                 }
             }
         } catch (err) {    

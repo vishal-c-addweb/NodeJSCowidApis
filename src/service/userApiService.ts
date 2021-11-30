@@ -3,9 +3,9 @@ import config from "config";
 import jwt from "jsonwebtoken"
 import User, { IUser } from "../model/User";
 
-export function createToken(userId: string) {
+export function createToken(userId: string, isAdmin: boolean) {
     let token: string = jwt.sign(
-        { user_id: userId },
+        { user_id: userId, user_isAdmin: isAdmin },
         config.get("jwtSecret"),
         { expiresIn: config.get("jwtExpiration") }
     );
@@ -20,7 +20,7 @@ export async function createUser(mobile: number, password: string) {
         password: hashed
     });
     await user.save();
-    const token: string = createToken(user._id);
+    const token: string = createToken(user._id, user.isAdmin);
     return token;
 }
 

@@ -1,12 +1,4 @@
 import User, { IMembers, IUser } from "../model/User";
-import Request from "../types/Request";
-import { dataArray } from "../response_builder/responsefunction";
-import responsecode from "../response_builder/responsecode";
-
-let message: string;
-let status: string;
-let data: object;
-let responseCode: number;
 
 function createMemberObject(photoIdProof:string,photoIdNumber:string,name:string,gender:string,yearOfBirth:number) {
     let refId: string = new Date().valueOf().toString();

@@ -1,0 +1,15 @@
+### Add vaccine center api.
+POST http://localhost:3000/cowid-19/addvaccinecenter
+@Variables = 
+{
+    "centerName":"gujarati school",
+    "address": "Bangla Area, ahmedabad, 382345, gujarat",
+    "name": "covishield",
+    "dose1": 200,
+    "dose2": 100,
+    "age": "18",
+    "cost": "paid",
+    "state": "gujarat",
+    "city": "ahmedabad",
+    "pinCode": 382345
+}

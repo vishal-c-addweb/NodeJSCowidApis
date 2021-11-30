@@ -1,11 +1,10 @@
 import Request from "../types/Request";
-import { dataArray } from "../response_builder/responsefunction";
 import responsecode from "../response_builder/responsecode";
+import { dataArray } from "../model/User";
 import VaccineCenter, { ICenter, IResponse, IVaccine, IVaccineCenter } from "../model/vaccineCenter";
 import moment from "moment";
 
-
-export function createVaccineCenterObject(centerName: string, address: string, cost: string, state: string, city: string, pinCode: number,name: string,dose1: number,dose2: number,age: string,price: number) {
+export async function createVaccineCenter(centerName: string, address: string, cost: string, state: string, city: string, pinCode: number,name: string,dose1: number,dose2: number,age: string,price: number) {
     const vaccine: [IVaccine] = [{
         date: moment(new Date()).format("D MMMM y"),
         name: name,
@@ -24,7 +23,9 @@ export function createVaccineCenterObject(centerName: string, address: string, c
         isAvailable: true,
         vaccine: vaccine
     };
-    return centerFields;
+    let center: IVaccineCenter = new VaccineCenter(centerFields);
+    await center.save();
+    return center;
 }
 
 export async function getCenterByName(centerName:string) {

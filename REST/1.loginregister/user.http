@@ -1,5 +1,5 @@
 ### Login user and get token
-POST  http://localhost:3000/api/user
+POST  http://localhost:3000/cowid-19/user
 @Variables = 
 { 
     "mobile": "6353653848",
@@ -7,5 +7,5 @@ POST  http://localhost:3000/api/user
 }
 
 ### Get authenticated user using the token
-GET  http://localhost:3000/api/user
+GET  http://localhost:3000/cowid-19/user
 x-auth-token: {{token}}

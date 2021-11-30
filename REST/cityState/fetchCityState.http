@@ -1,0 +1,5 @@
+### Get states using countryName
+GET  http://localhost:3000/cowid-19/state?countryName=India
+
+### Get states using countryName and stateName
+GET  http://localhost:3000/cowid-19/city?countryName=India&stateName=Gujarat
