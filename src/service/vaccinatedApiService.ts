@@ -1,8 +1,8 @@
 import moment from "moment";
-import {IMembers,IUser} from "../model/User";
+import {IDose, IMembers, IUser} from "../model/User";
 
 function createDoseObject(doses: any) {
-    const doseFields: object = {
+    const doseFields: IDose = {
         address: doses.address,
         vaccineType: doses.vaccineType,
         age: doses.age,
@@ -14,7 +14,7 @@ function createDoseObject(doses: any) {
     return doseFields;
 }
 
-function calculateDueAndLastDate(first: any, users: any) {
+function calculateDueAndLastDate(first: any, users: IMembers) {
     let month: number;
     if (first.vaccineType === "cowaxin") {
         month = 3;
@@ -46,6 +46,6 @@ export async function setFirstDoseStatus(users: IMembers, user: IUser) {
 export async function setSecondDoseStatus(users: IMembers, user: IUser) {
     users.vaccinatedType = "Successfully Vaccinated"
     let second: object = users.secondDose;
-    users.secondDose = createDoseObject(second);;
+    users.secondDose = createDoseObject(second);
     return await user.save();
 }

@@ -1,4 +1,4 @@
-import { Document, Model, model, Schema } from "mongoose";
+import { Document, Schema } from "mongoose";
 import mongoose from "mongoose";
 
 /**
@@ -8,17 +8,7 @@ import mongoose from "mongoose";
  * @param members:array
  */
 
-export interface IResponse {
-    meta: { 
-        response_code: number;
-        message: string;
-        status: string;
-        errors: object;
-    },
-    data: object;
-}
-
- export interface IVaccine {
+export interface IVaccine {
     date: string;
     name: string;
     dose1: number;
@@ -35,7 +25,7 @@ export interface ICenter {
     state: string;
     city: string;
     pinCode: number;
-    isAvailable: boolean; 
+    isAvailable: boolean;
 }
 
 export interface IVaccineCenter extends Document {
@@ -71,7 +61,7 @@ const vaccineCenterSchema: Schema = new Schema({
         dose2: { type: Number, required: true },
         age: { type: String, required: true },
         price: { type: Number },
-        _id: false 
+        _id: false
     }]
 });
 

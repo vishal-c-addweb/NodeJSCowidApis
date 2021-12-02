@@ -1,10 +1,9 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import Request from "../types/Request";
-import { IUser, dataArray } from "../model/User";
-import responsecode from "../response_builder/responsecode";
+import { IUser, IResponse } from "../model/User";
+import responseCode, { dataArray } from "../response_builder/responsecode";
 import * as userApiService from "../service/userApiService";
-import { IResponse } from "../model/vaccineCenter";
 
 const userApiController = {
     /**
@@ -14,27 +13,27 @@ const userApiController = {
      * @returns {*}
      */
     loginRegister: async function loginRegister(req: Request, res: Response) {
-        let result:IResponse;
+        let result: IResponse;
         try {
             let user: IUser = await userApiService.getUser(req.body.mobile);
             if (user) {
                 const isMatch: boolean = await bcrypt.compare(req.body.password, user.password);
                 if (isMatch) {
-                    const token: string = userApiService.createToken(user._id,user.isAdmin);
+                    const token: string = userApiService.createToken(user._id, user.isAdmin);
                     result = {
                         meta: {
-                            "response_code": responsecode.Success,
-                            "message": "Logged in Successfully",
+                            "responseCode": responseCode.Success,
+                            "message": "logged in successfully",
                             "status": "Success",
                             "errors": dataArray
                         },
-                        data: {token}
+                        data: { token }
                     }
                 } else {
                     result = {
                         meta: {
-                            "response_code": responsecode.Unauthorized,
-                            "message": "Invalid Credential",
+                            "responseCode": responseCode.Unauthorized,
+                            "message": "invalid credential",
                             "status": "Success",
                             "errors": dataArray
                         },
@@ -42,30 +41,30 @@ const userApiController = {
                     }
                 }
             } else {
-                const token: string = await userApiService.createUser(req.body.mobile,req.body.password);
+                const token: string = await userApiService.createUser(req.body.mobile, req.body.password);
                 result = {
                     meta: {
-                        "response_code": responsecode.Created,
-                        "message": "Registered Successfully",
+                        "responseCode": responseCode.Created,
+                        "message": "registered Successfully",
                         "status": "Success",
                         "errors": dataArray
                     },
-                    data: {token}
+                    data: { token }
                 }
             }
         } catch (err) {
             console.error(err.message);
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     },
 
     /**
@@ -75,13 +74,13 @@ const userApiController = {
      * @returns {*}
      */
     fetchUserData: async function fetchUserData(req: Request, res: Response) {
-        let result:IResponse;
+        let result: IResponse;
         try {
             let user: IUser = await userApiService.getUserById(req.userId);
             result = {
                 meta: {
-                    "response_code": responsecode.Success,
-                    "message": "User Data",
+                    "responseCode": responseCode.Success,
+                    "message": "user fetched successfully",
                     "status": "Success",
                     "errors": dataArray
                 },
@@ -91,15 +90,15 @@ const userApiController = {
             console.error(err.message);
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     }
 };
 

@@ -1,5 +1,5 @@
 /** response codes */
-const responsecode = {
+const responseCode = {
     Success: <number>200,
     Created: <number>201,
     Bad_Request: <number>400,
@@ -13,4 +13,6 @@ const responsecode = {
     No_Content: <number>204,
 }
 
-export default responsecode;
+export const dataArray: object = {};
+
+export default responseCode;

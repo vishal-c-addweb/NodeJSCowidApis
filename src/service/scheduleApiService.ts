@@ -1,35 +1,31 @@
 import Request from "../types/Request";
-import { IVaccineCenter} from "../model/vaccineCenter";
+import { IVaccineCenter } from "../model/vaccineCenter";
+import User, { IDose, IMembers, IUser } from "../model/User";
 
-export function updateFirstDoseSlots(dose:any,center:IVaccineCenter) {
+export function updateDoseSlots(dose: any, center: IVaccineCenter, doseNo: string) {
     for (let i = 0; i < center.vaccine.length; i++) {
         let element = center.vaccine[i];
         if (dose.vaccineType === element.name && dose.age === element.age) {
-            element.dose1 = element.dose1 - 1;
-            if (element.dose1 === 0) {
-                center.isAvailable = false;
+            if (doseNo === "first") {
+                element.dose1 = element.dose1 - 1;
+                if (element.dose1 === 0) {
+                    center.isAvailable = false;
+                }
+                center.save();
+            } else if (doseNo === "second") {
+                element.dose2 = element.dose2 - 1;
+                if (element.dose2 === 0) {
+                    center.isAvailable = false;
+                }
+                center.save();
             }
-            center.save();
-        }       
-    }
-}
-export function updateSecondDoseSlots(dose:any,center:IVaccineCenter) {
-    for (let i = 0; i < center.vaccine.length; i++) {
-        let element = center.vaccine[i];
-        if (dose.vaccineType === element.name && dose.age === element.age) {
-            element.dose2 = element.dose1 - 1;
-            if (element.dose2 === 0) {
-                center.isAvailable = false;
-            }
-            center.save();
-        }       
+        }
     }
 }
 
-export function createDoseObject(req: Request) {
-    const { address, vaccineType, age, cost, date, timeSlot } = req.body;
+export async function createDose(element: IMembers, user: IUser, center: IVaccineCenter, doseNo: string, address: string, vaccineType: string, age: string, cost: string, date: string, timeSlot: string) {
     let scheduled: string = "scheduled";
-    const doseFields: object = {
+    const doseFields: IDose = {
         address,
         vaccineType,
         age,
@@ -38,5 +34,13 @@ export function createDoseObject(req: Request) {
         timeSlot,
         vaccinatedType: scheduled
     };
-    return doseFields;
+    if (doseNo === "first") {
+        element.firstDose = doseFields;
+        await updateDoseSlots(element.firstDose, center, doseNo);
+    } else if (doseNo === "second") {
+        element.secondDose = doseFields;
+        await updateDoseSlots(element.secondDose, center, doseNo);
+    }
+    await user.save();
+    return user;
 }

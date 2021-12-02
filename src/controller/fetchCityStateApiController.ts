@@ -1,8 +1,7 @@
 import { Response } from "express";
 import Request from "../types/Request";
-import { dataArray } from "../model/User";
-import responsecode from "../response_builder/responsecode";
-import { IResponse } from "../model/vaccineCenter";
+import { IResponse } from "../model/User";
+import responseCode, { dataArray } from "../response_builder/responsecode";
 const { getStates, getCities } = require('cities-states-countries');
 
 const fetchCityStateApiController = {
@@ -20,8 +19,8 @@ const fetchCityStateApiController = {
             if (states.length !== 0) {
                 result = {
                     meta: {
-                        "response_code": responsecode.Success,
-                        "message": "Fetched States Successfully",
+                        "responseCode": responseCode.Success,
+                        "message": "states fetched successfully",
                         "status": "Success",
                         "errors": dataArray
                     },
@@ -30,8 +29,8 @@ const fetchCityStateApiController = {
             } else {
                 result = {
                     meta: {
-                        "response_code": responsecode.Not_Found,
-                        "message": "Country Code not Valid",
+                        "responseCode": responseCode.Not_Found,
+                        "message": "country code not Valid",
                         "status": "Failed",
                         "errors": dataArray
                     },
@@ -42,57 +41,57 @@ const fetchCityStateApiController = {
             console.error(err.message);
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     },
 
     fetchCityByStateAndCountry: async function fetchCityByStateAndCountry(req: Request, res: Response) {
         let result: IResponse;
         try {
             let stateName: string = req.query.stateName.toString();
-                let countryName: string = req.query.countryName.toString();
-                let cities: object[] = getCities(countryName, stateName);
-                if (cities === undefined || cities.length === 0) {
-                    result = {
-                        meta: {
-                            "response_code": responsecode.Not_Found,
-                            "message": "Country & State name not Valid",
-                            "status": "Failed",
-                            "errors": dataArray
-                        },
-                        data: dataArray
-                    }
-                } else {
-                    result = {
-                        meta: {
-                            "response_code": responsecode.Success,
-                            "message": "Fetched Cities Successfully",
-                            "status": "Success",
-                            "errors": dataArray
-                        },
-                        data: cities
-                    }
+            let countryName: string = req.query.countryName.toString();
+            let cities: object[] = getCities(countryName, stateName);
+            if (cities === undefined || cities.length === 0) {
+                result = {
+                    meta: {
+                        "responseCode": responseCode.Not_Found,
+                        "message": "country & state name not Valid",
+                        "status": "Failed",
+                        "errors": dataArray
+                    },
+                    data: dataArray
                 }
+            } else {
+                result = {
+                    meta: {
+                        "responseCode": responseCode.Success,
+                        "message": "cities fetched successfully",
+                        "status": "Success",
+                        "errors": dataArray
+                    },
+                    data: cities
+                }
+            }
         } catch (err) {
             console.error(err.message);
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     }
 };
 

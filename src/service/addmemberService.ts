@@ -1,9 +1,9 @@
 import User, { IMembers, IUser } from "../model/User";
 
 function createMemberObject(photoIdProof:string,photoIdNumber:string,name:string,gender:string,yearOfBirth:number) {
-    let refId: string = new Date().valueOf().toString();
-    let secretCode: string = refId.substr(-4);
-    let vaccinatedType: string = "Not Vaccinated";
+    const refId: string = new Date().valueOf().toString();
+    const secretCode: string = refId.substr(-4);
+    const vaccinatedType: string = "Not Vaccinated";
     const memberFields: IMembers = {
         photoIdProof,
         photoIdNumber,
@@ -24,7 +24,7 @@ export async function addMemberService(userId: string,photoIdProof:string,photoI
         { _id: userId },
         { $push: { members: createMemberObject(photoIdProof,photoIdNumber,name,gender,yearOfBirth) } }
     );
-    let user: IUser = await User.findById(userId);
+    const user: IUser = await User.findById(userId);
     return user;
 }
 
@@ -34,11 +34,9 @@ export async function deleteMemberService(userId: string, refId: string) {
             { "_id": userId },
             { $pull: { members: { refId: refId } } }
         );
-        let user: IUser = await User.findById(userId);
-        return user;
 }
 
 export async function getMember(photoIdNumber: number) {
-    let member: object[] = await User.find({ members: { $elemMatch: { photoIdNumber: photoIdNumber } } });
+    const member: object[] = await User.find({ members: { $elemMatch: { photoIdNumber: photoIdNumber } } });
     return member;
 }

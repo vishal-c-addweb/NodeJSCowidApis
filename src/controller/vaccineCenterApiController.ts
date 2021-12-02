@@ -1,9 +1,9 @@
 import { Response } from "express";
 import Request from "../types/Request";
-import { dataArray } from "../model/User";
-import responsecode from "../response_builder/responsecode";
+import { IResponse } from "../model/User";
+import { IVaccineCenter } from "../model/vaccineCenter";
+import responseCode, { dataArray } from "../response_builder/responsecode";
 import * as vaccineCenterApiService from "../service/vaccineCenterApiService";
-import { IResponse, IVaccineCenter } from "../model/vaccineCenter";
 
 const vaccineCenterApiController = {
 
@@ -20,39 +20,39 @@ const vaccineCenterApiController = {
             if (center) {
                 result = {
                     meta: {
-                        "response_code": responsecode.Forbidden,
-                        "message": "Center already exist",
+                        "responseCode": responseCode.Forbidden,
+                        "message": "center already exist",
                         "status": "Success",
                         "errors": center
                     },
                     data: dataArray
                 }
             } else {
-                const { centerName, address, cost, state, city, pinCode,name,dose1,dose2,age } = req.body;
+                const { centerName, address, cost, state, city, pinCode, name, dose1, dose2, age } = req.body;
                 let price: number = req.body.price ? req.body.price : null;
-                let center: IVaccineCenter = await vaccineCenterApiService.createVaccineCenter(centerName, address, cost, state, city, pinCode,name,dose1,dose2,age,price);
+                let center: IVaccineCenter = await vaccineCenterApiService.createVaccineCenter(centerName, address, cost, state, city, pinCode, name, dose1, dose2, age, price);
                 result = {
                     meta: {
-                        "response_code": responsecode.Created,
-                        "message": "Center Created successfully",
+                        "responseCode": responseCode.Created,
+                        "message": "center created successfully",
                         "status": "Success",
                         "errors": dataArray
                     },
                     data: center
                 }
             }
-        } catch (err) {    
+        } catch (err) {
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     },
 
     /**
@@ -65,44 +65,44 @@ const vaccineCenterApiController = {
         let result: IResponse;
         try {
             let center: IVaccineCenter = await vaccineCenterApiService.getCenterById(req.body.centerId);
-            if (!center) {  
+            if (!center) {
                 result = {
                     meta: {
-                        "response_code": responsecode.Not_Found,
-                        "message": "Center not found",
+                        "responseCode": responseCode.Not_Found,
+                        "message": "center not found",
                         "status": "Failed",
                         "errors": dataArray
                     },
                     data: dataArray
-                }  
+                }
             } else {
                 let centers: object[] = await vaccineCenterApiService.filteringVaccineCenterForUpdate(req);
                 if (centers.length === 0) {
                     result = {
                         meta: {
-                            "response_code": responsecode.Forbidden,
+                            "responseCode": responseCode.Forbidden,
                             "message": "vaccine already added",
                             "status": "Failed",
                             "errors": dataArray
                         },
                         data: dataArray
-                    }  
+                    }
                 } else {
                     result = {
                         meta: {
-                            "response_code": responsecode.Created,
+                            "responseCode": responseCode.Created,
                             "message": "vaccine center added successfully",
                             "status": "Success",
                             "errors": centers
                         },
                         data: dataArray
-                    }  
+                    }
                 }
             }
-        } catch (err) {    
+        } catch (err) {
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
+                    "responseCode": responseCode.Internal_Server_Error,
                     "message": "Server error",
                     "status": "Failed",
                     "errors": dataArray
@@ -110,7 +110,7 @@ const vaccineCenterApiController = {
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     },
 
     /**
@@ -127,30 +127,30 @@ const vaccineCenterApiController = {
                 let cost: string = req.body.cost ? req.body.cost : null;
                 let age: string = req.body.age ? req.body.age : null;
                 let vaccineName: string = req.body.vaccineName ? req.body.vaccineName : null;
-                result = await vaccineCenterApiService.filterCenters(center,cost,age,vaccineName);
-            } else {    
+                result = await vaccineCenterApiService.filterCenters(center, cost, age, vaccineName);
+            } else {
                 result = {
                     meta: {
-                        "response_code": responsecode.Not_Found,
-                        "message": "Center not found",
+                        "responseCode": responseCode.Not_Found,
+                        "message": "center not found",
                         "status": "Failed",
                         "errors": dataArray
                     },
                     data: dataArray
-                }   
+                }
             }
         } catch (err) {
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     },
 
     /**
@@ -161,18 +161,18 @@ const vaccineCenterApiController = {
     getcenterbycitystate: async function getcenterbycitystate(req: Request, res: Response) {
         let result: IResponse;
         try {
-            let center: IVaccineCenter[] = await vaccineCenterApiService.getVaccineCenterByCityState(req.body.state,req.body.city);
+            let center: IVaccineCenter[] = await vaccineCenterApiService.getVaccineCenterByCityState(req.body.state, req.body.city);
             if (center.length !== 0) {
                 let cost: string = req.body.cost ? req.body.cost : null;
                 let age: string = req.body.age ? req.body.age : null;
                 let vaccineName: string = req.body.vaccineName ? req.body.vaccineName : null;
-                let result = await vaccineCenterApiService.filterCenters(center,cost,age,vaccineName);
-                return res.status(result.meta['response_code']).json(result);
+                result = await vaccineCenterApiService.filterCenters(center, cost, age, vaccineName);
+                return res.status(result.meta['responseCode']).json(result);
             } else {
                 result = {
                     meta: {
-                        "response_code": responsecode.Not_Found,
-                        "message": "Center not found",
+                        "responseCode": responseCode.Not_Found,
+                        "message": "center not found",
                         "status": "Failed",
                         "errors": dataArray
                     },
@@ -182,15 +182,15 @@ const vaccineCenterApiController = {
         } catch (err) {
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     }
 };
 

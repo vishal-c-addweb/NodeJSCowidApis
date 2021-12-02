@@ -1,10 +1,10 @@
 import Request from "../types/Request";
-import responsecode from "../response_builder/responsecode";
-import { dataArray } from "../model/User";
-import VaccineCenter, { ICenter, IResponse, IVaccine, IVaccineCenter } from "../model/vaccineCenter";
+import responseCode, { dataArray } from "../response_builder/responsecode";
+import { IResponse } from "../model/User";
+import VaccineCenter, { ICenter, IVaccine, IVaccineCenter } from "../model/vaccineCenter";
 import moment from "moment";
 
-export async function createVaccineCenter(centerName: string, address: string, cost: string, state: string, city: string, pinCode: number,name: string,dose1: number,dose2: number,age: string,price: number) {
+export async function createVaccineCenter(centerName: string, address: string, cost: string, state: string, city: string, pinCode: number, name: string, dose1: number, dose2: number, age: string, price: number) {
     const vaccine: [IVaccine] = [{
         date: moment(new Date()).format("D MMMM y"),
         name: name,
@@ -28,22 +28,27 @@ export async function createVaccineCenter(centerName: string, address: string, c
     return center;
 }
 
-export async function getCenterByName(centerName:string) {
+export async function getAllCenter() {
+    let center: IVaccineCenter[] = await VaccineCenter.find();
+    return center;
+}
+
+export async function getCenterByName(centerName: string) {
     let center: IVaccineCenter = await VaccineCenter.findOne({ "centerName": centerName });
     return center;
 }
 
-export async function getCenterById(centerId:string) {
+export async function getCenterById(centerId: string) {
     let center: IVaccineCenter = await VaccineCenter.findOne({ "_id": centerId });
     return center;
 }
 
-export async function getVaccineCenterByPincode(pinCode:number) {
+export async function getVaccineCenterByPincode(pinCode: number) {
     let center: IVaccineCenter[] = await VaccineCenter.find({ pinCode: pinCode });
     return center;
 }
 
-export async function getVaccineCenterByCityState(state:string,city:string) {
+export async function getVaccineCenterByCityState(state: string, city: string) {
     let center: IVaccineCenter[] = await VaccineCenter.find({ "state": state, "city": city });
     return center;
 }
@@ -103,12 +108,12 @@ export async function filteringVaccineCenterForUpdate(req: Request) {
 }
 
 /* new api functions */
-export async function getVaccineCenterByCost(center:IVaccineCenter[],cost:string) {
+export async function getVaccineCenterByCost(center: IVaccineCenter[], cost: string) {
     let costArray: string[] = cost.split(",");
     let centerArr: object[] = [];
     for (let j = 0; j < center.length; j++) {
         if (costArray.includes(center[j].cost)) {
-            let centerObj:ICenter = getCenter(center[j],center[j].vaccine);
+            let centerObj: ICenter = getCenter(center[j], center[j].vaccine);
             centerArr.push(centerObj);
         }
     }
@@ -116,7 +121,7 @@ export async function getVaccineCenterByCost(center:IVaccineCenter[],cost:string
     return centerArr;
 }
 
-export async function getVaccineCenterByAge(center:IVaccineCenter[],age:string) {
+export async function getVaccineCenterByAge(center: IVaccineCenter[], age: string) {
     let ageArray: string[] = age.split(",");
     let vaccine: object[] = [];
     let centerArr: object[] = [];
@@ -126,7 +131,7 @@ export async function getVaccineCenterByAge(center:IVaccineCenter[],age:string) 
                 vaccine.push(center[j].vaccine[k]);
             }
         }
-        let centerObj:ICenter = getCenter(center[j],vaccine);
+        let centerObj: ICenter = getCenter(center[j], vaccine);
         if (centerObj.vaccine.length !== 0) {
             centerArr.push(centerObj);
         } else {
@@ -137,7 +142,7 @@ export async function getVaccineCenterByAge(center:IVaccineCenter[],age:string) 
     return centerArr;
 }
 
-export async function getVaccineCenterByName(center:IVaccineCenter[],name:string) {
+export async function getVaccineCenterByName(center: IVaccineCenter[], name: string) {
     let nameArray: string[] = name.split(",");
     let vaccine: object[] = [];
     let centerArr: object[] = [];
@@ -147,7 +152,7 @@ export async function getVaccineCenterByName(center:IVaccineCenter[],name:string
                 vaccine.push(center[j].vaccine[k]);
             }
         }
-        let centerObj:ICenter = getCenter(center[j],vaccine);
+        let centerObj: ICenter = getCenter(center[j], vaccine);
         if (centerObj.vaccine.length !== 0) {
             centerArr.push(centerObj);
         }
@@ -156,7 +161,7 @@ export async function getVaccineCenterByName(center:IVaccineCenter[],name:string
     return centerArr;
 }
 
-export async function getVaccineCenterByCostAndAge(center:IVaccineCenter[],cost:string,age:string) {
+export async function getVaccineCenterByCostAndAge(center: IVaccineCenter[], cost: string, age: string) {
     let costArray: string[] = cost.split(",");
     let ageArray: string[] = age.split(",");
     let vaccine: object[] = [];
@@ -167,7 +172,7 @@ export async function getVaccineCenterByCostAndAge(center:IVaccineCenter[],cost:
                 vaccine.push(center[j].vaccine[k]);
             }
         }
-        let centerObj:ICenter = getCenter(center[j],vaccine);
+        let centerObj: ICenter = getCenter(center[j], vaccine);
         if (centerObj.vaccine.length !== 0) {
             centerArr.push(centerObj);
         }
@@ -176,7 +181,7 @@ export async function getVaccineCenterByCostAndAge(center:IVaccineCenter[],cost:
     return centerArr;
 }
 
-export async function getVaccineCenterByAgeAndName(center:IVaccineCenter[],age:string,name:string) {
+export async function getVaccineCenterByAgeAndName(center: IVaccineCenter[], age: string, name: string) {
     let ageArray: string[] = age.split(",");
     let nameArray: string[] = name.split(",");
     let vaccine: object[] = [];
@@ -187,7 +192,7 @@ export async function getVaccineCenterByAgeAndName(center:IVaccineCenter[],age:s
                 vaccine.push(center[j].vaccine[k]);
             }
         }
-        let centerObj:ICenter = getCenter(center[j],vaccine);
+        let centerObj: ICenter = getCenter(center[j], vaccine);
         if (centerObj.vaccine.length !== 0) {
             centerArr.push(centerObj);
         }
@@ -196,7 +201,7 @@ export async function getVaccineCenterByAgeAndName(center:IVaccineCenter[],age:s
     return centerArr;
 }
 
-export async function getVaccineCenterByNameAndCost(center:IVaccineCenter[],name:string,cost:string) {
+export async function getVaccineCenterByNameAndCost(center: IVaccineCenter[], name: string, cost: string) {
     let nameArray: string[] = name.split(",");
     let costArray: string[] = cost.split(",");
     let vaccine: object[] = [];
@@ -207,7 +212,7 @@ export async function getVaccineCenterByNameAndCost(center:IVaccineCenter[],name
                 vaccine.push(center[j].vaccine[k]);
             }
         }
-        let centerObj:ICenter = getCenter(center[j],vaccine);
+        let centerObj: ICenter = getCenter(center[j], vaccine);
         if (centerObj.vaccine.length !== 0) {
             centerArr.push(centerObj);
         }
@@ -216,7 +221,7 @@ export async function getVaccineCenterByNameAndCost(center:IVaccineCenter[],name
     return centerArr;
 }
 
-export async function getVaccineCenterByCostAndAgeAndName(center:IVaccineCenter[],cost:string,name:string,age:string) {
+export async function getVaccineCenterByCostAndAgeAndName(center: IVaccineCenter[], cost: string, name: string, age: string) {
     let costArray: string[] = cost.split(",");
     let nameArray: string[] = name.split(",");
     let ageArray: string[] = age.split(",");
@@ -228,7 +233,7 @@ export async function getVaccineCenterByCostAndAgeAndName(center:IVaccineCenter[
                 vaccine.push(center[j].vaccine[k]);
             }
         }
-        let centerObj:ICenter = getCenter(center[j],vaccine);
+        let centerObj: ICenter = getCenter(center[j], vaccine);
         if (centerObj.vaccine.length !== 0) {
             centerArr.push(centerObj);
         }
@@ -237,15 +242,15 @@ export async function getVaccineCenterByCostAndAgeAndName(center:IVaccineCenter[
     return centerArr;
 }
 
-export async function filterCenters(centers:IVaccineCenter[],cost:string,age:string,vaccineName:string) {
-    let result:IResponse;
+export async function filterCenters(centers: IVaccineCenter[], cost: string, age: string, vaccineName: string) {
+    let result: IResponse;
     if (cost === null && age === null && vaccineName === null) {
         result = checkCenterIsExists(centers);
     } else if (cost !== null && age === null && vaccineName === null) {
-        let center: object[] = await getVaccineCenterByCost(centers,cost);
+        let center: object[] = await getVaccineCenterByCost(centers, cost);
         result = checkCenterIsExists(center);
     } else if (cost === null && age !== null && vaccineName === null) {
-        let center: object[] = await getVaccineCenterByAge(centers,age);   
+        let center: object[] = await getVaccineCenterByAge(centers, age);
         result = checkCenterIsExists(center);
     } else if (cost === null && age === null && vaccineName !== null) {
         let center: object[] = await getVaccineCenterByName(centers, vaccineName);
@@ -260,7 +265,7 @@ export async function filterCenters(centers:IVaccineCenter[],cost:string,age:str
         let center: object[] = await getVaccineCenterByNameAndCost(centers, vaccineName, cost);
         result = checkCenterIsExists(center);
     } else if (cost !== null && age !== null && name !== null) {
-        let center: object[] = await getVaccineCenterByCostAndAgeAndName(centers,cost,vaccineName,age);
+        let center: object[] = await getVaccineCenterByCostAndAgeAndName(centers, cost, vaccineName, age);
         result = checkCenterIsExists(center);
     } else {
         result = checkCenterIsExists(centers);
@@ -273,7 +278,7 @@ function checkCenterIsExists(center: object[]) {
     if (center.length === 0) {
         result = {
             meta: {
-                "response_code": responsecode.Not_Found,
+                "responseCode": responseCode.Not_Found,
                 "message": "Center not found",
                 "status": "Failed",
                 "errors": dataArray
@@ -283,7 +288,7 @@ function checkCenterIsExists(center: object[]) {
     } else {
         result = {
             meta: {
-                "response_code": responsecode.Success,
+                "responseCode": responseCode.Success,
                 "message": "Center Fetched Successfully",
                 "status": "Success",
                 "errors": dataArray
@@ -294,8 +299,8 @@ function checkCenterIsExists(center: object[]) {
     return result;
 }
 
-function getCenter(center:IVaccineCenter,vaccine:object[]) {
-    let centerObj:ICenter = {
+function getCenter(center: IVaccineCenter, vaccine: object[]) {
+    let centerObj: ICenter = {
         centerName: center.centerName,
         address: center.address,
         vaccine: vaccine,

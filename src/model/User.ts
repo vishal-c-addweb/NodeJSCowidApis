@@ -1,4 +1,4 @@
-import { Document, Model, model, Schema } from "mongoose";
+import { Document, Schema } from "mongoose";
 import mongoose from "mongoose";
 
 /**
@@ -7,6 +7,26 @@ import mongoose from "mongoose";
  * @param password: string
  * @param members:array
  */
+
+export interface IResponse {
+  meta: {
+    responseCode: number;
+    message: string;
+    status: string;
+    errors: object;
+  },
+  data: object;
+}
+
+export interface IDose {
+  address: string;
+  vaccineType: string;
+  age: string;
+  cost: string;
+  date: string;
+  timeSlot: string;
+  vaccinatedType: string;
+}
 
 export interface IMembers {
   photoIdProof: string,
@@ -26,16 +46,6 @@ export interface IUser extends Document {
   mobile: number;
   password: string;
   members: Array<IMembers>
-}
-
-export interface IDose {
-  address: string;
-  vaccineType: string;
-  age: string;
-  cost: string;
-  date: string;
-  timeSlot: string;
-  vaccinatedType: string;
 }
 
 const userSchema: Schema = new Schema({
@@ -59,5 +69,3 @@ const userSchema: Schema = new Schema({
 const User = mongoose.model<IUser>("User", userSchema);
 
 export default User;
-
-export const dataArray: object = {};

@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 import User, { IUser } from "../model/User";
 
 export function createToken(userId: string, isAdmin: boolean) {
-    let token: string = jwt.sign(
+    const token: string = jwt.sign(
         { user_id: userId, user_isAdmin: isAdmin },
         config.get("jwtSecret"),
         { expiresIn: config.get("jwtExpiration") }
@@ -25,11 +25,16 @@ export async function createUser(mobile: number, password: string) {
 }
 
 export async function getUser(mobile: number) {
-    let user: IUser = await User.findOne({ mobile: mobile });
+    const user: IUser = await User.findOne({ mobile: mobile });
     return user;
 }
 
 export async function getUserById(userId: string) {
-    let user: IUser = await User.findById(userId);
+    const user: IUser = await User.findById(userId);
+    return user;
+}
+
+export async function getUserBySecretCode(secretCode: string) {
+    const user: IUser = await User.findOne({ "members": { $elemMatch: { secretCode: secretCode } } });
     return user;
 }

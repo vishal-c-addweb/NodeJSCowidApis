@@ -1,11 +1,11 @@
 import { Response } from "express";
 import Request from "../types/Request";
-import { IMembers, IUser, dataArray } from "../model/User";
-import responsecode from "../response_builder/responsecode";
+import { IMembers, IUser, IResponse } from "../model/User";
+import responseCode, { dataArray } from "../response_builder/responsecode";
+import { IVaccineCenter } from "../model/vaccineCenter";
 import * as userApiService from "../service/userApiService";
 import * as scheduleApiService from "../service/scheduleApiService";
 import * as vaccineCenterApiService from "../service/vaccineCenterApiService";
-import { IResponse, IVaccineCenter } from "../model/vaccineCenter";
 
 const scheduleApiController = {
     /**
@@ -25,7 +25,7 @@ const scheduleApiController = {
                     if (center === null || center.isAvailable === false) {
                         result = {
                             meta: {
-                                "response_code": responsecode.Not_Found,
+                                "responseCode": responseCode.Not_Found,
                                 "message": "center not available",
                                 "status": "Failed",
                                 "errors": dataArray
@@ -34,17 +34,17 @@ const scheduleApiController = {
                         }
                     } else {
                         if (element.firstDose === undefined) {
-                            element.firstDose = scheduleApiService.createDoseObject(req);
-                            await user.save();
-                            await scheduleApiService.updateFirstDoseSlots(element.firstDose, center);
+                            const { address, vaccineType, age, cost, date, timeSlot } = req.body;
+                            const doseNo: string = "first";
+                            const userData: IUser = await scheduleApiService.createDose(element, user, center, doseNo, address, vaccineType, age, cost, date, timeSlot);
                             result = {
                                 meta: {
-                                    "response_code": responsecode.Created,
+                                    "responseCode": responseCode.Created,
                                     "message": "firstdose scheduled successfully",
                                     "status": "Success",
                                     "errors": dataArray
                                 },
-                                data: user
+                                data: userData
                             }
                         } else {
                             let first: any = element.firstDose;
@@ -53,7 +53,7 @@ const scheduleApiController = {
                                 if (second.vaccinatedType === "success") {
                                     result = {
                                         meta: {
-                                            "response_code": responsecode.Forbidden,
+                                            "responseCode": responseCode.Forbidden,
                                             "message": "vaccinated successfully",
                                             "status": "Success",
                                             "errors": dataArray
@@ -64,7 +64,7 @@ const scheduleApiController = {
                                     if (second.vaccinatedType === "scheduled") {
                                         result = {
                                             meta: {
-                                                "response_code": responsecode.Forbidden,
+                                                "responseCode": responseCode.Forbidden,
                                                 "message": "second dose already scheduled",
                                                 "status": "Failed",
                                                 "errors": dataArray
@@ -72,25 +72,25 @@ const scheduleApiController = {
                                             data: dataArray
                                         }
                                     } else {
-                                        element.secondDose = scheduleApiService.createDoseObject(req);
-                                        await user.save();
-                                        await scheduleApiService.updateSecondDoseSlots(element.firstDose, center);
+                                        const { address, vaccineType, age, cost, date, timeSlot } = req.body;
+                                        const doseNo: string = "second";
+                                        const userData: IUser = await scheduleApiService.createDose(element, user, center, doseNo, address, vaccineType, age, cost, date, timeSlot);
                                         result = {
                                             meta: {
-                                                "response_code": responsecode.Created,
+                                                "responseCode": responseCode.Created,
                                                 "message": "second dose scheduled successfully",
                                                 "status": "Success",
                                                 "errors": dataArray
                                             },
-                                            data: user
+                                            data: userData
                                         }
                                     }
                                 }
                             } else {
                                 result = {
                                     meta: {
-                                        "response_code": responsecode.Forbidden,
-                                        "message": "you are not able to schedule second dose take first dose",
+                                        "responseCode": responseCode.Forbidden,
+                                        "message": "you are not able to schedule second dose please take first dose",
                                         "status": "Failed",
                                         "errors": dataArray
                                     },
@@ -102,7 +102,7 @@ const scheduleApiController = {
                 } else {
                     result = {
                         meta: {
-                            "response_code": responsecode.Not_Found,
+                            "responseCode": responseCode.Not_Found,
                             "message": "reference id is not valid",
                             "status": "Failed",
                             "errors": dataArray
@@ -114,15 +114,15 @@ const scheduleApiController = {
         } catch (err) {
             result = {
                 meta: {
-                    "response_code": responsecode.Internal_Server_Error,
-                    "message": "Server error",
+                    "responseCode": responseCode.Internal_Server_Error,
+                    "message": "server error",
                     "status": "Failed",
                     "errors": dataArray
                 },
                 data: dataArray
             }
         }
-        return res.status(result.meta['response_code']).json(result);
+        return res.status(result.meta['responseCode']).json(result);
     }
 };
 
